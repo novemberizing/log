@@ -1,13 +1,23 @@
 {
   "name": "@novemberizing/log",
-  "version": "0.0.9",
-  "description": "novemberizing's log lib.",
+  "version": "0.0.17",
+  "description": "Novemberizing's log lib.",
   "main": "./src/index.js",
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/novemberizing/app.git"
+    "url": "git+https://gitlab.com/novemberizing/log.git"
   },
+  "bugs": {
+    "url": "https://gitlab.com/novemberizing/log/issues"
+  },
+  "keywords": [
+    "novemberizing",
+    "nodejs",
+    "javascript",
+    "log"
+  ],
+  "homepage": "https://novemberizing.github.io/log",
   "scripts": {
     "test": "mocha --recursive"
   },
