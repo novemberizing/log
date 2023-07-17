@@ -18,7 +18,7 @@ NOVEMBERIZING LOG
 
 "Novemberizing log"는 간단하게 사용할 수 있는 라이브러리를 목표로 합니다.
 
-![Class Diagram Log](/docs/assets/images/ClassDiagramLog.jpg)
+![Class Diagram Log](https://novemberizing.github.io/log/assets/images/ClassDiagramLog.jpg)
 
 ## 설치
 
