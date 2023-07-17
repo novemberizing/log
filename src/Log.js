@@ -190,22 +190,3 @@ export default class Log {
 
     }
 }
-
-// TODO: HOW TO TEST
-async function TestLog() {
-    Log.config = { name: "novemberizing", path: "." };
-
-    Log.e("novemberizing", "error");
-    Log.w("novemberizing", "warning");
-    Log.i("novemberizing", "information");
-    Log.d("novemberizing", "debug");
-    Log.v("novemberizing", "verbose");
-
-    Log.e("novemberizing", {hello: "world"});
-    Log.w("novemberizing", {hello: "world"});
-    Log.i("novemberizing", {hello: "world"});
-    Log.d("novemberizing", {hello: "world"});
-    Log.v("novemberizing", {hello: "world"});
-}
-
-// TestLog();
