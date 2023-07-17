@@ -1,5 +1,26 @@
+/**
+ * @module      Log
+ */
+
 import fs from 'fs';
 
+/**
+ * @class
+ * 
+ * Application Programming Interface for sending log output.
+ * 
+ * Generally, you should use the `Log.v()`, `Log.d()`, `Log.i()`, `Log.w()`, and `Log.e()` methods to write logs.
+ * 
+ * A good convention is to declare a `#tag` constant in your class:
+
+```
+static #tag = "Helloworld";
+
+...
+```
+
+ * and use that in subsequent calls to the log methods.
+ */
 export default class Log {
     static #name = null;
     static #path = null;
@@ -110,13 +131,42 @@ export default class Log {
         return message;
     }
 
+    /**
+     * Change the log settings.
+     * 
+     * __Config field:__
+     * 
+| name        | type    | option   | description             |
+| ----------- | ------- | -------- | ----------------------- |
+| name        | String  | optional | Log name.               |
+| path        | String  | optoinal | Log path.               |
+| error       | Boolean | optional | Use error or not.       |
+| warning     | Boolean | optional | Use warning or not.     |
+| information | Boolean | optional | Use information or not. |
+| debug       | Boolean | optional | Use debug or not.       |
+| verbose     | Boolean | optional | Use verbose or not.     |
+     * 
+     * __Example:__
+     * 
+```
+Log.config = {
+    name: "novemberizing",
+    path: ".",
+    verbose: false,
+    debug: false
+};
+```
+     * 
+     */
     static set config(o) {
         o = Object.assign({
             error: Log.#error,
             warning: Log.#warning,
             information: Log.#information,
             debug: Log.#debug,
-            verbose: Log.#verbose
+            verbose: Log.#verbose,
+            name: Log.#name,
+            path: Log.#path
         }, o);
 
         Log.#name = o.name;
@@ -129,6 +179,16 @@ export default class Log {
         Log.#verbose = o.verbose;
     }
 
+    /**
+     * Send an error log message.
+     * 
+     * @param {String} tag      Used to identify the source of a log message.
+     *                          It usually identifies the class where the log call occurs.
+     *                          
+     * @param {String} message  The message you would like logged.
+     * 
+     * @example                 Log.e(#tag, "error log");
+     */
     static e(tag, message) {
         if(Log.#error) {
             const date = new Date();
@@ -141,6 +201,16 @@ export default class Log {
         }
     }
 
+    /**
+     * Send an warning log message.
+     * 
+     * @param {String} tag      Used to identify the source of a log message.
+     *                          It usually identifies the class where the log call occurs.
+     *                          
+     * @param {String} message  The message you would like logged.
+     * 
+     * @example                 Log.w(#tag, "warning log");
+     */
     static w(tag, message) {
         if(Log.#warning) {
             const date = new Date();
@@ -153,6 +223,16 @@ export default class Log {
         }
     }
 
+    /**
+     * Send an information log message.
+     * 
+     * @param {String} tag      Used to identify the source of a log message.
+     *                          It usually identifies the class where the log call occurs.
+     *                          
+     * @param {String} message  The message you would like logged.
+     * 
+     * @example                 Log.i(#tag, "information log");
+     */
     static i(tag, message) {
         if(Log.#information) {
             const date = new Date();
@@ -165,6 +245,16 @@ export default class Log {
         }
     }
 
+    /**
+     * Send an debug log message.
+     * 
+     * @param {String} tag      Used to identify the source of a log message.
+     *                          It usually identifies the class where the log call occurs.
+     *                          
+     * @param {String} message  The message you would like logged.
+     * 
+     * @example                 Log.d(#tag, "debug log");
+     */
     static d(tag, message) {
         if(Log.#debug) {
             const date = new Date();
@@ -177,6 +267,16 @@ export default class Log {
         }
     }
 
+    /**
+     * Send an verbose log message.
+     * 
+     * @param {String} tag      Used to identify the source of a log message.
+     *                          It usually identifies the class where the log call occurs.
+     *                          
+     * @param {String} message  The message you would like logged.
+     * 
+     * @example                 Log.v(#tag, "verbose log");
+     */
     static v(tag, message) {
         if(Log.#verbose) {
             const date = new Date();

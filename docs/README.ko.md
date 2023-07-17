@@ -64,3 +64,7 @@ Log.config = {
     verbose: false
 }
 ```
+
+### 문서
+
+[Novemberizing log api](https://novemberizing.github.io/log/api)
