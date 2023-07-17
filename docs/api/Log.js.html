@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Log.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Log.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module      Log
+ */
+
+import fs from 'fs';
+
+/**
+ * @class
+ * 
+ * Application Programming Interface for sending log output.
+ * 
+ * Generally, you should use the `Log.v()`, `Log.d()`, `Log.i()`, `Log.w()`, and `Log.e()` methods to write logs.
+ * 
+ * A good convention is to declare a `#tag` constant in your class:
+
+```
+static #tag = "Helloworld";
+
+...
+```
+
+ * and use that in subsequent calls to the log methods.
+ */
+export default class Log {
+    static #name = null;
+    static #path = null;
+    static #lastdate = null;
+
+    static #error = true;
+    static #warning = true;
+    static #information = true;
+    static #debug = true;
+    static #verbose = true;
+
+    static #numberToStr(n) {
+        return n &lt; 10 ? `0${n}` : n;
+    }
+
+    static #millisecondToStr(n) {
+        return n &lt; 10 ? `00${n}` :(n &lt; 100 ? `0${n}` : n);
+    }
+
+    static #generateDateStr(date) {
+        const year = date.getFullYear();
+        const month = Log.#numberToStr(date.getMonth() + 1);
+        const day = Log.#numberToStr(date.getDate());
+        const hour = Log.#numberToStr(date.getHours());
+        const minute = Log.#numberToStr(date.getMinutes());
+        const second = Log.#numberToStr(date.getSeconds());
+        const millisecond = Log.#millisecondToStr(date.getMilliseconds());
+
+        return `${year}/${month}/${day} ${hour}:${minute}:${second}.${millisecond}`;
+    }
+
+    static #generateFilepathStr(date) {
+        if(Log.#path &amp;&amp; Log.#name) {
+            if(date) {
+                const year = date.getFullYear();
+                const month = Log.#numberToStr(date.getMonth() + 1);
+                const day = Log.#numberToStr(date.getDate());
+    
+                return `${Log.#path}/${Log.#name}.${year}${month}${day}.log`; 
+            }
+    
+            return `${Log.#path}/${Log.#name}.log`;
+        }
+
+        return null;
+    }
+
+    static #initializeLastdate() {
+        if(!Log.#lastdate) {
+            try {
+                const stat = fs.statSync(Log.#path);
+                Log.#lastdate = stat.mtime;
+            } catch(e) {
+                console.log(e);
+            }
+        }
+    }
+
+    static #needToRename(date) {
+        if(Log.#lastdate) {
+            if(Log.#lastdate.getFullYear()===date.getFullYear()) {
+                if(Log.#lastdate.getMonth()===date.getMonth()) {
+                    if(Log.#lastdate.getDate()===date.getDate()) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    static #renameLog(date) {
+        if(Log.#needToRename(date)) {
+            const oldPath = Log.#generateFilepathStr();
+            const newPath = Log.#generateFilepathStr(Log.#lastdate);
+    
+            try {
+                fs.renameSync(oldPath, newPath);
+            } catch(e) {
+                console.log(e);
+            }
+        }
+    }
+
+    static #appendFileSync(date, sentence) {
+        if(Log.#path &amp;&amp; Log.#name) {
+            try {
+                Log.#initializeLastdate();
+                Log.#renameLog(date);
+                
+                fs.appendFileSync(Log.#generateFilepathStr(), `${sentence}\r\n`, "utf-8");
+
+                Log.#lastdate = date;
+            } catch(e) {
+                // TODO: 파일을 저장하지 못하면 ALERT 을 보낸다.
+                console.log(e);
+            }
+        }
+    }
+
+    static #messageToStr(message) {
+        if(typeof message === "object") {
+            return JSON.stringify(message);
+        }
+        return message;
+    }
+
+    static set config(o) {
+        o = Object.assign({
+            error: Log.#error,
+            warning: Log.#warning,
+            information: Log.#information,
+            debug: Log.#debug,
+            verbose: Log.#verbose
+        }, o);
+
+        Log.#name = o.name;
+        Log.#path = o.path;
+
+        Log.#error = o.error;
+        Log.#warning = o.warning;
+        Log.#information = o.information;
+        Log.#debug = o.debug;
+        Log.#verbose = o.verbose;
+    }
+
+    /**
+     * Send an error log message.
+     * 
+     * @param {String} tag      Used to identify the source of a log message.
+     *                          It usually identifies the class where the log call occurs.
+     *                          
+     * @param {String} message  The message you would like logged.
+     */
+    static e(tag, message) {
+        if(Log.#error) {
+            const date = new Date();
+
+            const sentence = `${Log.#generateDateStr(date)} ${Log.#name}/e ${tag}: ${Log.#messageToStr(message)}`;
+    
+            console.log(sentence);
+    
+            Log.#appendFileSync(date, sentence);
+        }
+    }
+
+    /**
+     * Send an warning log message.
+     * 
+     * @param {String} tag      Used to identify the source of a log message.
+     *                          It usually identifies the class where the log call occurs.
+     *                          
+     * @param {String} message  The message you would like logged.
+     */
+    static w(tag, message) {
+        if(Log.#warning) {
+            const date = new Date();
+
+            const sentence = `${Log.#generateDateStr(date)} ${Log.#name}/w ${tag}: ${Log.#messageToStr(message)}`;
+    
+            console.log(sentence);
+    
+            Log.#appendFileSync(date, sentence);
+        }
+    }
+
+    /**
+     * Send an information log message.
+     * 
+     * @param {String} tag      Used to identify the source of a log message.
+     *                          It usually identifies the class where the log call occurs.
+     *                          
+     * @param {String} message  The message you would like logged.
+     */
+    static i(tag, message) {
+        if(Log.#information) {
+            const date = new Date();
+
+            const sentence = `${Log.#generateDateStr(date)} ${Log.#name}/i ${tag}: ${Log.#messageToStr(message)}`;
+    
+            console.log(sentence);
+    
+            Log.#appendFileSync(date, sentence);
+        }
+    }
+
+    /**
+     * Send an debug log message.
+     * 
+     * @param {String} tag      Used to identify the source of a log message.
+     *                          It usually identifies the class where the log call occurs.
+     *                          
+     * @param {String} message  The message you would like logged.
+     */
+    static d(tag, message) {
+        if(Log.#debug) {
+            const date = new Date();
+
+            const sentence = `${Log.#generateDateStr(date)} ${Log.#name}/d ${tag}: ${Log.#messageToStr(message)}`;
+    
+            console.log(sentence);
+    
+            Log.#appendFileSync(date, sentence);
+        }
+    }
+
+    /**
+     * Send an verbose log message.
+     * 
+     * @param {String} tag      Used to identify the source of a log message.
+     *                          It usually identifies the class where the log call occurs.
+     *                          
+     * @param {String} message  The message you would like logged.
+     */
+    static v(tag, message) {
+        if(Log.#verbose) {
+            const date = new Date();
+
+            const sentence = `${Log.#generateDateStr(date)} ${Log.#name}/v ${tag}: ${Log.#messageToStr(message)}`;
+    
+            console.log(sentence);
+    
+            Log.#appendFileSync(date, sentence);
+        }
+
+    }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Log.html">Log</a></li></ul><h3>Classes</h3><ul><li><a href="module-Log.html">Log</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Mon Jul 17 2023 15:43:25 GMT+0900 (대한민국 표준시)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
