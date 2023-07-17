@@ -1,0 +1,19 @@
+{
+  "name": "@novemberizing/log",
+  "version": "0.0.9",
+  "description": "novemberizing's log lib.",
+  "main": "./src/index.js",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/novemberizing/app.git"
+  },
+  "scripts": {
+    "test": "mocha --recursive"
+  },
+  "author": "novemberizing <novemberizing@gmali.com>",
+  "license": "MPL-2.0",
+  "devDependencies": {
+    "mocha": "^10.2.0"
+  }
+}
