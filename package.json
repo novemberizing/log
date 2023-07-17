@@ -19,11 +19,13 @@
   ],
   "homepage": "https://novemberizing.github.io/log",
   "scripts": {
-    "test": "mocha --recursive"
+    "test": "mocha --recursive",
+    "doc": "jsdoc -c jsdoc.json"
   },
   "author": "novemberizing <novemberizing@gmali.com>",
   "license": "MPL-2.0",
   "devDependencies": {
+    "jsdoc": "^4.0.2",
     "mocha": "^10.2.0"
   }
 }
