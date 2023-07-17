@@ -1,6 +1,6 @@
 {
   "name": "@novemberizing/log",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Novemberizing's log lib.",
   "main": "./src/index.js",
   "type": "module",
